@@ -9,6 +9,8 @@ DOCS GENERAL/
 *.md
 !README.md
 !QUICK_START.md
+!QUICK_GIT_GUIDE.md
+!PRE-COMMIT-CHECKLIST.md
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
