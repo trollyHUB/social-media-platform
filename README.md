@@ -347,7 +347,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Tolegen**
 - GitHub: [@tolegen](https://github.com/tolegen)
 - Email: tolegen@example.com
-- University: IITU (International IT University)
+- University: ENU
 
 ---
 
