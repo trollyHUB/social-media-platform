@@ -1,52 +1,72 @@
 package com.tolegen.webapplicationdevelopmentlab2.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 /**
- * Модель пользователя социальной сети
- * User model for Social Media Platform
+ * JPA Entity для пользователя социальной сети
+ * @Data от Lombok генерирует геттеры, сеттеры, toString, equals, hashCode
  */
+@Entity
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "username"),
+        @UniqueConstraint(columnNames = "email")
+})
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
-    private int id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true, length = 50)
     private String username;
+
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
+
+    @Column(length = 500)
     private String bio;
-    private LocalDateTime registeredAt;
+
+    @Column(name = "avatar_color", length = 100)
+    private String avatarColor = "#667eea, #764ba2";
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createdAt;
+
+    @Column(name = "last_active")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime lastActive;
-    private String avatarColor; // Цвет аватара
 
-    public User() {
-        this.registeredAt = LocalDateTime.now();
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
         this.lastActive = LocalDateTime.now();
-        this.avatarColor = generateRandomColor();
+        if (this.avatarColor == null) {
+            this.avatarColor = generateRandomColor();
+        }
     }
 
-    public User(int id, String username, String email) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.registeredAt = LocalDateTime.now();
+    @PreUpdate
+    protected void onUpdate() {
         this.lastActive = LocalDateTime.now();
-        this.avatarColor = generateRandomColor();
-    }
-
-    public User(int id, String username, String email, String bio) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.bio = bio;
-        this.registeredAt = LocalDateTime.now();
-        this.lastActive = LocalDateTime.now();
-        this.avatarColor = generateRandomColor();
     }
 
     private String generateRandomColor() {
         String[] colors = {
-            "#667eea, #764ba2",
-            "#11998e, #38ef7d",
-            "#ee0979, #ff6a00",
-            "#f093fb, #f5576c",
-            "#4facfe, #00f2fe"
+                "#667eea, #764ba2",
+                "#11998e, #38ef7d",
+                "#ee0979, #ff6a00",
+                "#f093fb, #f5576c",
+                "#4facfe, #00f2fe"
         };
         return colors[(int) (Math.random() * colors.length)];
     }
@@ -54,77 +74,12 @@ public class User {
     public boolean isOnline() {
         if (lastActive == null) return false;
         long minutes = java.time.Duration.between(lastActive, LocalDateTime.now()).toMinutes();
-        return minutes < 5; // Онлайн если активность менее 5 минут назад
+        return minutes < 5;
     }
 
-    public void updateActivity() {
-        this.lastActive = LocalDateTime.now();
-    }
-
-    // ...existing code...
-
-    public LocalDateTime getLastActive() {
-        return lastActive;
-    }
-
-    public void setLastActive(LocalDateTime lastActive) {
-        this.lastActive = lastActive;
-    }
-
-    public String getAvatarColor() {
-        return avatarColor;
-    }
-
-    public void setAvatarColor(String avatarColor) {
-        this.avatarColor = avatarColor;
-    }
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
+    // Для совместимости со старым кодом
     public LocalDateTime getRegisteredAt() {
-        return registeredAt;
-    }
-
-    public void setRegisteredAt(LocalDateTime registeredAt) {
-        this.registeredAt = registeredAt;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", bio='" + bio + '\'' +
-                '}';
+        return createdAt;
     }
 }
+

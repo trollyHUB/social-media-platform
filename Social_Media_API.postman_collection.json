@@ -1,0 +1,361 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Social Media Platform API",
+    "description": "REST API для Social Media Platform на Spring Boot + PostgreSQL. Базовый URL: http://localhost:8090",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8090",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Posts API",
+      "item": [
+        {
+          "name": "GET - All Posts",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts"]
+            },
+            "description": "Получить все посты (сортировка: новые сначала)"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Post by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", "1"]
+            },
+            "description": "Получить пост по ID (PATH параметр)"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Posts by Author",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts?author=tolegen",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts"],
+              "query": [
+                { "key": "author", "value": "tolegen" }
+              ]
+            },
+            "description": "Получить все посты конкретного автора"
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Create Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"author\": \"tolegen\",\n  \"content\": \"Это мой тестовый пост через REST API!\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/posts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts"]
+            },
+            "description": "Создать новый пост. Ответ: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Update Post",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"author\": \"tolegen\",\n  \"content\": \"Обновлённый текст поста через PUT запрос\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", "1"]
+            },
+            "description": "Обновить пост по ID. Ответ: 200 OK"
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Delete Post",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", "1"]
+            },
+            "description": "Удалить пост по ID"
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Like Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/1/like",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", "1", "like"]
+            },
+            "description": "Лайкнуть пост. Счётчик likes увеличится на 1"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comments API",
+      "item": [
+        {
+          "name": "GET - Comments of Post",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/1/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", "1", "comments"]
+            },
+            "description": "Получить все комментарии поста с ID=1"
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Add Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"author\": \"aisha\",\n  \"content\": \"Отличный пост! Полностью согласна\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/1/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", "1", "comments"]
+            },
+            "description": "Добавить комментарий к посту ID=1. Ответ: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/comments/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comments", "1"]
+            },
+            "description": "Удалить комментарий по ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users API",
+      "item": [
+        {
+          "name": "GET - All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Получить всех пользователей"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1"]
+            },
+            "description": "Получить пользователя по ID"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - User by Username",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?username=aisha",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"],
+              "query": [
+                { "key": "username", "value": "aisha" }
+              ]
+            },
+            "description": "Найти пользователя по username"
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"bio\": \"Новый пользователь через API\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Создать нового пользователя. Ответ: 201 Created"
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Create User Duplicate Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"aisha\",\n  \"email\": \"aisha@example.com\",\n  \"bio\": \"Test дубликат\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Тест: попытка создать дубликат (aisha уже существует). Ожидается 409 Conflict"
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/13",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "13"]
+            },
+            "description": "Удалить пользователя по ID"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Stats and Health",
+      "item": [
+        {
+          "name": "GET - Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "stats"]
+            },
+            "description": "Статистика платформы: кол-во пользователей, постов, лайков, комментариев"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Health Check",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Проверка работоспособности. Ответ: {status: UP, database: PostgreSQL, port: 8090}"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

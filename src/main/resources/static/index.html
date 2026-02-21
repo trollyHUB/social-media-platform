@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Platform</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="bg-circles">
+        <div class="circle"></div><div class="circle"></div>
+        <div class="circle"></div><div class="circle"></div>
+    </div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo">📱</div>
+            <h1>Social Media Platform</h1>
+            <p class="subtitle">Spring Boot + PostgreSQL + REST API</p>
+            <div class="db-status-bar" id="dbStatus">
+                <span class="db-dot" id="dbDot"></span>
+                <span id="dbText">Проверка подключения...</span>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">-</div>
+                <div class="stat-label">Пользователей</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalPosts">-</div>
+                <div class="stat-label">Постов</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalLikes">-</div>
+                <div class="stat-label">Лайков</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalComments">-</div>
+                <div class="stat-label">Комментариев</div>
+            </div>
+        </div>
+
+        <!-- NAVIGATION -->
+        <div class="nav-cards">
+            <div class="nav-card" id="nav-posts" onclick="showSection('posts')">
+                <div class="nav-icon">📝</div>
+                <h3>Посты</h3>
+                <p>Лента постов, создание, лайки</p>
+            </div>
+            <div class="nav-card" id="nav-users" onclick="showSection('users')">
+                <div class="nav-icon">👥</div>
+                <h3>Пользователи</h3>
+                <p>Список, регистрация, профили</p>
+            </div>
+            <div class="nav-card" id="nav-api-demo" onclick="showSection('api-demo')">
+                <div class="nav-icon">📡</div>
+                <h3>REST API Demo</h3>
+                <p>Тестирование API (для Postman)</p>
+            </div>
+        </div>
+
+        <!-- POSTS SECTION -->
+        <div class="section" id="section-posts" style="display:none;">
+            <h2 class="section-title">📝 Лента постов</h2>
+
+            <div class="form-card">
+                <h3>✏️ Новый пост</h3>
+                <div class="form-group">
+                    <input type="text" id="postAuthor" placeholder="Ваше имя" class="input-field">
+                    <textarea id="postContent" placeholder="Что у вас нового?" class="input-field" rows="3"></textarea>
+                    <button class="btn btn-primary" id="createPostBtn">📤 Опубликовать</button>
+                </div>
+                <div id="postMessage" class="form-message"></div>
+            </div>
+
+            <!-- Фильтр по автору -->
+            <div class="filter-bar">
+                <input type="text" id="filterAuthor" placeholder="🔍 Фильтр по автору..." class="input-field-sm">
+                <button class="btn btn-secondary" id="filterBtn">Найти</button>
+                <button class="btn btn-secondary" id="clearFilterBtn">Все посты</button>
+            </div>
+
+            <div id="postsContainer" class="posts-list"></div>
+        </div>
+
+        <!-- USERS SECTION -->
+        <div class="section" id="section-users" style="display:none;">
+            <h2 class="section-title">👥 Пользователи</h2>
+
+            <div class="form-card">
+                <h3>➕ Новый пользователь</h3>
+                <div class="form-group">
+                    <input type="text" id="newUsername" placeholder="Username (мин. 3 символа)" class="input-field">
+                    <input type="email" id="newEmail" placeholder="Email" class="input-field">
+                    <input type="text" id="newBio" placeholder="О себе (необязательно)" class="input-field">
+                    <button class="btn btn-primary" id="createUserBtn">👤 Зарегистрировать</button>
+                </div>
+                <div id="userMessage" class="form-message"></div>
+            </div>
+
+            <div id="usersContainer" class="users-list"></div>
+        </div>
+
+        <!-- API DEMO SECTION -->
+        <div class="section" id="section-api-demo" style="display:none;">
+            <h2 class="section-title">📡 REST API Demo</h2>
+            <p class="section-desc">Все запросы отображаются в <strong>Postman</strong> и в DevTools → Network вкладке</p>
+            <p class="section-desc">Базовый URL: <code>http://localhost:8090</code></p>
+
+            <div class="api-grid">
+                <!-- Posts API -->
+                <div class="api-group">
+                    <h3>📝 Posts API</h3>
+                    <button class="btn btn-get" id="btn-get-posts">GET /api/posts</button>
+                    <button class="btn btn-get" id="btn-get-post-1">GET /api/posts/1</button>
+                    <button class="btn btn-post" id="btn-post-post">POST /api/posts</button>
+                    <button class="btn btn-put" id="btn-put-post">PUT /api/posts/1</button>
+                    <button class="btn btn-delete" id="btn-delete-post">DELETE /api/posts/1</button>
+                    <button class="btn btn-post" id="btn-like-post">POST /api/posts/1/like</button>
+                </div>
+
+                <!-- Users API -->
+                <div class="api-group">
+                    <h3>👥 Users API</h3>
+                    <button class="btn btn-get" id="btn-get-users">GET /api/users</button>
+                    <button class="btn btn-get" id="btn-get-user-1">GET /api/users/1</button>
+                    <button class="btn btn-post" id="btn-post-user">POST /api/users</button>
+                    <button class="btn btn-delete" id="btn-delete-user">DELETE /api/users/1</button>
+                </div>
+
+                <!-- Comments API -->
+                <div class="api-group">
+                    <h3>💬 Comments API</h3>
+                    <button class="btn btn-get" id="btn-get-comments">GET /api/posts/1/comments</button>
+                    <button class="btn btn-post" id="btn-post-comment">POST /api/posts/1/comments</button>
+                </div>
+
+                <!-- Other API -->
+                <div class="api-group">
+                    <h3>📊 Статистика и здоровье</h3>
+                    <button class="btn btn-get" id="btn-get-stats">GET /api/stats</button>
+                    <button class="btn btn-get" id="btn-get-health">GET /api/health</button>
+                </div>
+            </div>
+
+            <!-- API Response -->
+            <div class="api-response-card">
+                <h3>📋 Ответ сервера:</h3>
+                <div class="api-meta" id="apiMeta">Выберите запрос выше...</div>
+                <pre id="apiResponse" class="api-response">Нажмите на кнопку для отправки запроса...</pre>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>🚀 Social Media Platform | Spring Boot 3.2.2 | Java 17 | PostgreSQL</p>
+            <p>📡 REST API: <code>http://localhost:8090/api/</code></p>
+        </div>
+    </div>
+
+    <!-- Модальное окно для редактирования поста -->
+    <div id="editModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>✏️ Редактировать пост</h3>
+            <textarea id="editContent" class="input-field" rows="4"></textarea>
+            <input type="hidden" id="editPostId">
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="saveEditBtn">💾 Сохранить</button>
+                <button class="btn btn-secondary" id="cancelEditBtn">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api-client.js"></script>
+    <script>
+        // ======= ИНИЦИАЛИЗАЦИЯ =======
+        document.addEventListener('DOMContentLoaded', function() {
+            checkHealth();
+            loadStats();
+            setupEventListeners();
+            console.log('🚀 Social Media Platform загружен!');
+            console.log('📡 REST API: http://localhost:8090/api/');
+            console.log('💡 Используйте Postman для тестирования API');
+        });
+
+        // ======= НАСТРОЙКА СЛУШАТЕЛЕЙ СОБЫТИЙ (без eval/onclick) =======
+        function setupEventListeners() {
+            // Посты
+            document.getElementById('createPostBtn').addEventListener('click', createPost);
+            document.getElementById('filterBtn').addEventListener('click', filterPosts);
+            document.getElementById('clearFilterBtn').addEventListener('click', function() {
+                document.getElementById('filterAuthor').value = '';
+                loadPosts();
+            });
+
+            // Пользователи
+            document.getElementById('createUserBtn').addEventListener('click', createUser);
+
+            // Редактирование поста
+            document.getElementById('saveEditBtn').addEventListener('click', saveEdit);
+            document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
+
+            // API Demo кнопки
+            document.getElementById('btn-get-posts').addEventListener('click', function() {
+                apiCall('GET', '/api/posts');
+            });
+            document.getElementById('btn-get-post-1').addEventListener('click', function() {
+                apiCall('GET', '/api/posts/1');
+            });
+            document.getElementById('btn-post-post').addEventListener('click', function() {
+                apiCallPost('/api/posts', {author: 'demo_user', content: 'Тестовый пост из API Demo!'});
+            });
+            document.getElementById('btn-put-post').addEventListener('click', function() {
+                apiCallPost('/api/posts/1', {author: 'demo_user', content: 'Обновлённый пост!'}, 'PUT');
+            });
+            document.getElementById('btn-delete-post').addEventListener('click', function() {
+                apiCall('DELETE', '/api/posts/1');
+            });
+            document.getElementById('btn-like-post').addEventListener('click', function() {
+                apiCallPost('/api/posts/1/like', {});
+            });
+            document.getElementById('btn-get-users').addEventListener('click', function() {
+                apiCall('GET', '/api/users');
+            });
+            document.getElementById('btn-get-user-1').addEventListener('click', function() {
+                apiCall('GET', '/api/users/1');
+            });
+            document.getElementById('btn-post-user').addEventListener('click', function() {
+                apiCallPost('/api/users', {username: 'test_user_' + Date.now(), email: 'test' + Date.now() + '@test.com', bio: 'Тестовый пользователь'});
+            });
+            document.getElementById('btn-delete-user').addEventListener('click', function() {
+                apiCall('DELETE', '/api/users/1');
+            });
+            document.getElementById('btn-get-comments').addEventListener('click', function() {
+                apiCall('GET', '/api/posts/1/comments');
+            });
+            document.getElementById('btn-post-comment').addEventListener('click', function() {
+                apiCallPost('/api/posts/1/comments', {author: 'demo_user', content: 'Отличный пост!'});
+            });
+            document.getElementById('btn-get-stats').addEventListener('click', function() {
+                apiCall('GET', '/api/stats');
+            });
+            document.getElementById('btn-get-health').addEventListener('click', function() {
+                apiCall('GET', '/api/health');
+            });
+
+            // Enter в фильтре
+            document.getElementById('filterAuthor').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') filterPosts();
+            });
+
+            // Закрытие модального окна по клику вне него
+            document.getElementById('editModal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        }
+
+        // ======= ЗДОРОВЬЕ И СТАТИСТИКА =======
+        function checkHealth() {
+            fetch('/api/health')
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    document.getElementById('dbDot').classList.add('online');
+                    document.getElementById('dbText').textContent = 'PostgreSQL подключен ✅ | Порт: ' + data.port;
+                })
+                .catch(function() {
+                    document.getElementById('dbDot').classList.add('offline');
+                    document.getElementById('dbText').textContent = 'Ошибка подключения ❌ — запустите приложение!';
+                });
+        }
+
+        function loadStats() {
+            fetch('/api/stats')
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    document.getElementById('totalUsers').textContent = data.totalUsers || 0;
+                    document.getElementById('totalPosts').textContent = data.totalPosts || 0;
+                    document.getElementById('totalLikes').textContent = data.totalLikes || 0;
+                    document.getElementById('totalComments').textContent = data.totalComments || 0;
+                })
+                .catch(function(e) { console.error('Ошибка загрузки статистики:', e); });
+        }
+
+        // ======= НАВИГАЦИЯ =======
+        function showSection(name) {
+            document.querySelectorAll('.section').forEach(function(s) { s.style.display = 'none'; });
+            document.querySelectorAll('.nav-card').forEach(function(c) { c.classList.remove('active'); });
+            var section = document.getElementById('section-' + name);
+            if (section) {
+                section.style.display = 'block';
+                var navCard = document.getElementById('nav-' + name);
+                if (navCard) navCard.classList.add('active');
+                if (name === 'posts') loadPosts();
+                if (name === 'users') loadUsers();
+            }
+        }
+
+        // ======= ПОСТЫ =======
+        function loadPosts() {
+            fetch('/api/posts')
+                .then(function(res) { return res.json(); })
+                .then(function(posts) { renderPosts(posts); })
+                .catch(function(e) { console.error('Ошибка загрузки постов:', e); });
+        }
+
+        function filterPosts() {
+            var author = document.getElementById('filterAuthor').value.trim();
+            var url = author ? '/api/posts?author=' + encodeURIComponent(author) : '/api/posts';
+            fetch(url)
+                .then(function(res) { return res.json(); })
+                .then(function(posts) { renderPosts(posts); })
+                .catch(function(e) { console.error('Ошибка фильтрации:', e); });
+        }
+
+        function renderPosts(posts) {
+            var container = document.getElementById('postsContainer');
+            if (!posts || posts.length === 0) {
+                container.innerHTML = '<div class="empty-state">📭 Постов нет. Будьте первым!</div>';
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < posts.length; i++) {
+                var post = posts[i];
+                var dateStr = post.createdAt ? formatDate(post.createdAt) : '';
+                var updatedStr = (post.updatedAt && post.updatedAt !== post.createdAt)
+                    ? '<span class="updated-tag">✏️ изменён ' + formatDate(post.updatedAt) + '</span>' : '';
+                html += '<div class="post-card" id="post-' + post.id + '">' +
+                    '<div class="post-header">' +
+                    '<div class="post-avatar">' + (post.author ? post.author[0].toUpperCase() : '?') + '</div>' +
+                    '<div class="post-meta">' +
+                    '<strong class="post-author">@' + escapeHtml(post.author) + '</strong>' +
+                    '<span class="post-time" title="Дата создания: ' + dateStr + '">🕐 ' + dateStr + '</span>' +
+                    updatedStr +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="post-content" id="post-content-' + post.id + '">' + escapeHtml(post.content) + '</div>' +
+                    '<div class="post-actions">' +
+                    '<button class="btn-action like-btn" data-id="' + post.id + '">❤️ ' + (post.likes || 0) + '</button>' +
+                    '<button class="btn-action comment-btn" data-id="' + post.id + '">💬 ' + (post.commentsCount || 0) + '</button>' +
+                    '<button class="btn-action edit-btn" data-id="' + post.id + '" data-content="' + escapeAttr(post.content) + '">✏️ Изменить</button>' +
+                    '<button class="btn-action btn-danger delete-post-btn" data-id="' + post.id + '">🗑️ Удалить</button>' +
+                    '</div>' +
+                    '<div id="comments-' + post.id + '" class="comments-section" style="display:none;"></div>' +
+                    '</div>';
+            }
+            container.innerHTML = html;
+
+            // Навешиваем события на кнопки постов
+            container.querySelectorAll('.like-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() { likePost(this.dataset.id); });
+            });
+            container.querySelectorAll('.comment-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() { toggleComments(this.dataset.id); });
+            });
+            container.querySelectorAll('.edit-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() { openEditModal(this.dataset.id, this.dataset.content); });
+            });
+            container.querySelectorAll('.delete-post-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() { deletePost(this.dataset.id); });
+            });
+        }
+
+        function createPost() {
+            var author = document.getElementById('postAuthor').value.trim();
+            var content = document.getElementById('postContent').value.trim();
+            var msg = document.getElementById('postMessage');
+            if (!author || !content) {
+                showMessage(msg, 'Заполните все поля!', 'error');
+                return;
+            }
+            fetch('/api/posts', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({author: author, content: content})
+            })
+            .then(function(res) {
+                if (res.ok) {
+                    document.getElementById('postAuthor').value = '';
+                    document.getElementById('postContent').value = '';
+                    showMessage(msg, 'Пост опубликован! ✅', 'success');
+                    loadPosts();
+                    loadStats();
+                } else {
+                    return res.json().then(function(err) {
+                        showMessage(msg, 'Ошибка: ' + (err.error || 'Неизвестная ошибка'), 'error');
+                    });
+                }
+            })
+            .catch(function() { showMessage(msg, 'Ошибка сети — сервер не отвечает!', 'error'); });
+        }
+
+        function likePost(id) {
+            fetch('/api/posts/' + id + '/like', {method: 'POST'})
+                .then(function() { loadPosts(); loadStats(); });
+        }
+
+        function deletePost(id) {
+            if (!confirm('Удалить этот пост?')) return;
+            fetch('/api/posts/' + id, {method: 'DELETE'})
+                .then(function() { loadPosts(); loadStats(); });
+        }
+
+        // ======= РЕДАКТИРОВАНИЕ ПОСТА =======
+        function openEditModal(id, content) {
+            document.getElementById('editPostId').value = id;
+            document.getElementById('editContent').value = content;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function saveEdit() {
+            var id = document.getElementById('editPostId').value;
+            var content = document.getElementById('editContent').value.trim();
+            if (!content) return;
+            fetch('/api/posts/' + id, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({author: 'user', content: content})
+            })
+            .then(function() {
+                closeModal();
+                loadPosts();
+            });
+        }
+
+        // ======= КОММЕНТАРИИ =======
+        function toggleComments(postId) {
+            var div = document.getElementById('comments-' + postId);
+            if (div.style.display === 'none') {
+                div.style.display = 'block';
+                loadComments(postId);
+            } else {
+                div.style.display = 'none';
+            }
+        }
+
+        function loadComments(postId) {
+            fetch('/api/posts/' + postId + '/comments')
+                .then(function(res) { return res.json(); })
+                .then(function(comments) { renderComments(postId, comments); });
+        }
+
+        function renderComments(postId, comments) {
+            var div = document.getElementById('comments-' + postId);
+            var commentsHtml = '';
+            for (var i = 0; i < comments.length; i++) {
+                var c = comments[i];
+                var cDate = c.createdAt ? formatDate(c.createdAt) : '';
+                commentsHtml += '<div class="comment" id="comment-' + c.id + '">' +
+                    '<strong>' + escapeHtml(c.author) + '</strong>: ' +
+                    escapeHtml(c.content) +
+                    '<span class="comment-time">🕐 ' + cDate + '</span>' +
+                    '<button class="btn-delete-sm delete-comment-btn" data-id="' + c.id + '" data-postid="' + postId + '">✕</button>' +
+                    '</div>';
+            }
+            div.innerHTML = '<div class="comment-form">' +
+                '<input type="text" id="commentAuthor-' + postId + '" placeholder="Имя" class="input-field-sm">' +
+                '<input type="text" id="commentContent-' + postId + '" placeholder="Комментарий..." class="input-field-sm">' +
+                '<button class="btn-sm add-comment-btn" data-postid="' + postId + '">💬 Отправить</button>' +
+                '</div>' +
+                (commentsHtml || '<div class="empty-state-sm">Нет комментариев</div>');
+
+            div.querySelectorAll('.add-comment-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() { addComment(this.dataset.postid); });
+            });
+            div.querySelectorAll('.delete-comment-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() { deleteComment(this.dataset.id, this.dataset.postid); });
+            });
+        }
+
+        function addComment(postId) {
+            var author = document.getElementById('commentAuthor-' + postId).value.trim();
+            var content = document.getElementById('commentContent-' + postId).value.trim();
+            if (!author || !content) return;
+            fetch('/api/posts/' + postId + '/comments', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({author: author, content: content})
+            })
+            .then(function() { loadComments(postId); loadPosts(); loadStats(); });
+        }
+
+        function deleteComment(commentId, postId) {
+            fetch('/api/comments/' + commentId, {method: 'DELETE'})
+                .then(function() { loadComments(postId); loadPosts(); loadStats(); });
+        }
+
+        // ======= ПОЛЬЗОВАТЕЛИ =======
+        function loadUsers() {
+            fetch('/api/users')
+                .then(function(res) { return res.json(); })
+                .then(function(users) { renderUsers(users); })
+                .catch(function(e) { console.error('Ошибка загрузки пользователей:', e); });
+        }
+
+        function renderUsers(users) {
+            var container = document.getElementById('usersContainer');
+            if (!users || users.length === 0) {
+                container.innerHTML = '<div class="empty-state">👤 Нет пользователей</div>';
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < users.length; i++) {
+                var user = users[i];
+                var color = user.avatarColor || '#667eea, #764ba2';
+                var createdStr = user.createdAt ? formatDate(user.createdAt) : 'N/A';
+                var lastActiveStr = user.lastActive ? formatDate(user.lastActive) : 'N/A';
+                html += '<div class="user-card">' +
+                    '<div class="user-avatar" style="background: linear-gradient(135deg, ' + color + ');">' +
+                    (user.username ? user.username[0].toUpperCase() : '?') +
+                    '</div>' +
+                    '<div class="user-info">' +
+                    '<h4>@' + escapeHtml(user.username) + ' <span class="user-id">#' + user.id + '</span></h4>' +
+                    '<p class="user-email">📧 ' + escapeHtml(user.email) + '</p>' +
+                    '<p class="user-bio">' + escapeHtml(user.bio || 'Без описания') + '</p>' +
+                    '<p class="user-time">📅 Создан: ' + createdStr + '</p>' +
+                    '<p class="user-time">🕐 Активность: ' + lastActiveStr + '</p>' +
+                    '</div>' +
+                    '<button class="btn-action btn-danger delete-user-btn" data-id="' + user.id + '">🗑️</button>' +
+                    '</div>';
+            }
+            container.innerHTML = html;
+            container.querySelectorAll('.delete-user-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() { deleteUser(this.dataset.id); });
+            });
+        }
+
+        function createUser() {
+            var username = document.getElementById('newUsername').value.trim();
+            var email = document.getElementById('newEmail').value.trim();
+            var bio = document.getElementById('newBio').value.trim();
+            var msg = document.getElementById('userMessage');
+            if (!username || !email) {
+                showMessage(msg, 'Заполните username и email!', 'error');
+                return;
+            }
+            fetch('/api/users', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: username, email: email, bio: bio || 'Новый пользователь'})
+            })
+            .then(function(res) {
+                if (res.ok) {
+                    document.getElementById('newUsername').value = '';
+                    document.getElementById('newEmail').value = '';
+                    document.getElementById('newBio').value = '';
+                    showMessage(msg, 'Пользователь создан! ✅', 'success');
+                    loadUsers();
+                    loadStats();
+                } else {
+                    return res.json().then(function(err) {
+                        showMessage(msg, 'Ошибка: ' + (err.error || 'Username/email уже существует!'), 'error');
+                    });
+                }
+            })
+            .catch(function() { showMessage(msg, 'Ошибка сети!', 'error'); });
+        }
+
+        function deleteUser(id) {
+            if (!confirm('Удалить пользователя?')) return;
+            fetch('/api/users/' + id, {method: 'DELETE'})
+                .then(function() { loadUsers(); loadStats(); });
+        }
+
+        // ======= API DEMO =======
+        function apiCall(method, url) {
+            var meta = document.getElementById('apiMeta');
+            var output = document.getElementById('apiResponse');
+            meta.innerHTML = '<span class="method-badge method-' + method.toLowerCase() + '">' + method + '</span> ' + url;
+            output.textContent = 'Загрузка...';
+            var start = performance.now();
+            fetch(url, {method: method, headers: {'Accept': 'application/json'}})
+                .then(function(res) {
+                    var time = Math.round(performance.now() - start);
+                    var status = res.status;
+                    return res.json().then(function(data) {
+                        var statusClass = status < 300 ? 'status-ok' : 'status-error';
+                        meta.innerHTML = '<span class="method-badge method-' + method.toLowerCase() + '">' + method + '</span> ' +
+                            url + ' — <span class="' + statusClass + '">' + status + '</span> (' + time + 'ms)';
+                        output.textContent = JSON.stringify(data, null, 2);
+                    });
+                })
+                .catch(function(e) { output.textContent = 'Ошибка: ' + e.message; });
+        }
+
+        function apiCallPost(url, body, method) {
+            method = method || 'POST';
+            var meta = document.getElementById('apiMeta');
+            var output = document.getElementById('apiResponse');
+            meta.innerHTML = '<span class="method-badge method-' + method.toLowerCase() + '">' + method + '</span> ' + url;
+            output.textContent = 'Загрузка...';
+            var start = performance.now();
+            fetch(url, {
+                method: method,
+                headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+                body: JSON.stringify(body)
+            })
+            .then(function(res) {
+                var time = Math.round(performance.now() - start);
+                var status = res.status;
+                return res.json().then(function(data) {
+                    var statusClass = status < 300 ? 'status-ok' : 'status-error';
+                    meta.innerHTML = '<span class="method-badge method-' + method.toLowerCase() + '">' + method + '</span> ' +
+                        url + ' — <span class="' + statusClass + '">' + status + '</span> (' + time + 'ms)';
+                    output.textContent = JSON.stringify(data, null, 2);
+                    loadStats();
+                });
+            })
+            .catch(function(e) { output.textContent = 'Ошибка: ' + e.message; });
+        }
+
+        // ======= УТИЛИТЫ =======
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function escapeAttr(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function formatDate(isoString) {
+            if (!isoString) return '';
+            var d = new Date(isoString);
+            var now = new Date();
+            var diffMs = now - d;
+            var diffMin = Math.floor(diffMs / 60000);
+            if (diffMin < 1) return 'только что';
+            if (diffMin < 60) return diffMin + ' мин. назад';
+            var diffH = Math.floor(diffMin / 60);
+            if (diffH < 24) return diffH + ' ч. назад';
+            var diffD = Math.floor(diffH / 24);
+            if (diffD === 1) return 'вчера';
+            if (diffD < 7) return diffD + ' дн. назад';
+            return d.toLocaleString('ru-RU');
+        }
+
+        function showMessage(el, text, type) {
+            el.textContent = text;
+            el.className = 'form-message ' + type;
+            setTimeout(function() { el.textContent = ''; el.className = 'form-message'; }, 4000);
+        }
+    </script>
+</body>
+</html>

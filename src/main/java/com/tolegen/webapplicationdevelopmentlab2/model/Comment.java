@@ -1,70 +1,48 @@
 package com.tolegen.webapplicationdevelopmentlab2.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 /**
- * Модель комментария к посту
+ * JPA Entity для комментария к посту
  */
+@Entity
+@Table(name = "comments")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comment {
-    private int id;
-    private int postId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "post_id", nullable = false)
+    private Long postId;
+
+    @Column(nullable = false, length = 50)
     private String author;
+
+    @Column(nullable = false, length = 500)
     private String content;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
-    public Comment() {
+    @PrePersist
+    protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-    }
-
-    public Comment(int id, int postId, String author, String content) {
-        this.id = id;
-        this.postId = postId;
-        this.author = author;
-        this.content = content;
-        this.createdAt = LocalDateTime.now();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getPostId() {
-        return postId;
-    }
-
-    public void setPostId(int postId) {
-        this.postId = postId;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public String getRelativeTime() {
+        if (createdAt == null) return "";
+
         LocalDateTime now = LocalDateTime.now();
         long minutes = java.time.Duration.between(createdAt, now).toMinutes();
 
