@@ -1,8 +1,8 @@
 {
   "info": {
-    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "name": "Social Media Platform API",
-    "description": "REST API для Social Media Platform на Spring Boot + PostgreSQL. Базовый URL: http://localhost:8090",
+    "_postman_id": "nexis-connect-2026-v2",
+    "name": "NEXIS Connect API v2",
+    "description": "REST API для NEXIS Connect — Social Media Platform.\nBase URL: http://localhost:8090\n\n🔐 Авторизация:\n1. Запусти 'POST /api/auth/login'\n2. Скопируй token из ответа\n3. Вставь в переменную коллекции 'token'\n4. Все авторизованные запросы используют его автоматически",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -10,41 +10,151 @@
       "key": "baseUrl",
       "value": "http://localhost:8090",
       "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "description": "JWT токен — вставь сюда после логина",
+      "type": "string"
     }
   ],
   "item": [
     {
-      "name": "Posts API",
+      "name": "🔓 Auth",
       "item": [
         {
-          "name": "GET - All Posts",
+          "name": "POST - Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) {",
+                  "  pm.collectionVariables.set('token', json.token);",
+                  "  console.log('Token saved:', json.token.substring(0,20) + '...');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\",\n  \"bio\": \"Привет! Я новый пользователь\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Регистрация нового пользователя. Автоматически сохраняет JWT токен в переменную 'token'."
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Login (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) {",
+                  "  pm.collectionVariables.set('token', json.token);",
+                  "  console.log('Token saved. Role:', json.user.role);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@nexis.com\",\n  \"password\": \"admin123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Войти как ADMIN. Автоматически сохраняет токен в переменную 'token'.\n\nАккаунты для теста:\n- admin@nexis.com / admin123 (ADMIN)\n- moder@nexis.com / moder123 (MODERATOR)\n- tolegen@nexis.com / test123 (USER)"
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Login (User)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.token) { pm.collectionVariables.set('token', json.token); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"tolegen@nexis.com\",\n  \"password\": \"test123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Войти как обычный USER."
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Me (current user)",
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Получить информацию о текущем авторизованном пользователе. Требует JWT токен."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📝 Posts",
+      "item": [
+        {
+          "name": "GET - All Posts (feed)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/posts",
               "host": ["{{baseUrl}}"],
               "path": ["api", "posts"]
             },
-            "description": "Получить все посты (сортировка: новые сначала)"
-          },
-          "response": []
-        },
-        {
-          "name": "GET - Post by ID",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Accept", "value": "application/json" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/posts/1",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "posts", "1"]
-            },
-            "description": "Получить пост по ID (PATH параметр)"
+            "description": "Лента всех постов (новые первыми). Требует авторизацию."
           },
           "response": []
         },
@@ -53,17 +163,31 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/posts?author=tolegen",
               "host": ["{{baseUrl}}"],
               "path": ["api", "posts"],
-              "query": [
-                { "key": "author", "value": "tolegen" }
-              ]
+              "query": [{ "key": "author", "value": "tolegen" }]
             },
-            "description": "Получить все посты конкретного автора"
+            "description": "Посты конкретного автора."
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Post by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", "1"]
+            },
+            "description": "Получить пост по ID."
           },
           "response": []
         },
@@ -73,11 +197,11 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"author\": \"tolegen\",\n  \"content\": \"Это мой тестовый пост через REST API!\"\n}",
+              "raw": "{\n  \"author\": \"tolegen\",\n  \"content\": \"Это мой тестовый пост через Postman! 🚀\"\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -85,7 +209,23 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "posts"]
             },
-            "description": "Создать новый пост. Ответ: 201 Created"
+            "description": "Создать новый пост. Требует JWT токен."
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Like Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/1/like",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", "1", "like"]
+            },
+            "description": "Лайкнуть пост ID=1. Счётчик likes увеличится."
           },
           "response": []
         },
@@ -95,7 +235,7 @@
             "method": "PUT",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "body": {
               "mode": "raw",
@@ -107,7 +247,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "posts", "1"]
             },
-            "description": "Обновить пост по ID. Ответ: 200 OK"
+            "description": "Обновить пост по ID."
           },
           "response": []
         },
@@ -116,51 +256,35 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/posts/1",
               "host": ["{{baseUrl}}"],
               "path": ["api", "posts", "1"]
             },
-            "description": "Удалить пост по ID"
-          },
-          "response": []
-        },
-        {
-          "name": "POST - Like Post",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Accept", "value": "application/json" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/posts/1/like",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "posts", "1", "like"]
-            },
-            "description": "Лайкнуть пост. Счётчик likes увеличится на 1"
+            "description": "Удалить свой пост по ID."
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Comments API",
+      "name": "💬 Comments",
       "item": [
         {
           "name": "GET - Comments of Post",
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/posts/1/comments",
               "host": ["{{baseUrl}}"],
               "path": ["api", "posts", "1", "comments"]
             },
-            "description": "Получить все комментарии поста с ID=1"
+            "description": "Все комментарии поста ID=1."
           },
           "response": []
         },
@@ -170,11 +294,11 @@
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"author\": \"aisha\",\n  \"content\": \"Отличный пост! Полностью согласна\"\n}",
+              "raw": "{\n  \"author\": \"aisha\",\n  \"content\": \"Отличный пост! Полностью согласна 👍\"\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -182,7 +306,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "posts", "1", "comments"]
             },
-            "description": "Добавить комментарий к посту ID=1. Ответ: 201 Created"
+            "description": "Добавить комментарий к посту ID=1."
           },
           "response": []
         },
@@ -191,35 +315,35 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/comments/1",
               "host": ["{{baseUrl}}"],
               "path": ["api", "comments", "1"]
             },
-            "description": "Удалить комментарий по ID"
+            "description": "Удалить комментарий по ID."
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Users API",
+      "name": "👥 Users",
       "item": [
         {
           "name": "GET - All Users",
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/users",
               "host": ["{{baseUrl}}"],
               "path": ["api", "users"]
             },
-            "description": "Получить всех пользователей"
+            "description": "Получить всех пользователей."
           },
           "response": []
         },
@@ -228,14 +352,14 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/users/1",
               "host": ["{{baseUrl}}"],
               "path": ["api", "users", "1"]
             },
-            "description": "Получить пользователя по ID"
+            "description": "Профиль пользователя по ID."
           },
           "response": []
         },
@@ -244,31 +368,29 @@
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/users?username=aisha",
               "host": ["{{baseUrl}}"],
               "path": ["api", "users"],
-              "query": [
-                { "key": "username", "value": "aisha" }
-              ]
+              "query": [{ "key": "username", "value": "aisha" }]
             },
-            "description": "Найти пользователя по username"
+            "description": "Найти пользователя по username."
           },
           "response": []
         },
         {
-          "name": "POST - Create User",
+          "name": "POST - Create User (legacy)",
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"bio\": \"Новый пользователь через API\"\n}",
+              "raw": "{\n  \"username\": \"testuser99\",\n  \"email\": \"testuser99@example.com\",\n  \"bio\": \"Тест через старый API\"\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -276,29 +398,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["api", "users"]
             },
-            "description": "Создать нового пользователя. Ответ: 201 Created"
-          },
-          "response": []
-        },
-        {
-          "name": "POST - Create User Duplicate Test",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" },
-              { "key": "Accept", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"username\": \"aisha\",\n  \"email\": \"aisha@example.com\",\n  \"bio\": \"Test дубликат\"\n}",
-              "options": { "raw": { "language": "json" } }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/users",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users"]
-            },
-            "description": "Тест: попытка создать дубликат (aisha уже существует). Ожидается 409 Conflict"
+            "description": "Создать пользователя напрямую (без пароля). Используй /api/auth/register для нормальной регистрации."
           },
           "response": []
         },
@@ -307,51 +407,154 @@
           "request": {
             "method": "DELETE",
             "header": [
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
               "raw": "{{baseUrl}}/api/users/13",
               "host": ["{{baseUrl}}"],
               "path": ["api", "users", "13"]
             },
-            "description": "Удалить пользователя по ID"
+            "description": "Удалить пользователя по ID."
           },
           "response": []
         }
       ]
     },
     {
-      "name": "Stats and Health",
+      "name": "🛡️ Admin (только ADMIN роль)",
       "item": [
         {
-          "name": "GET - Statistics",
+          "name": "GET - All Users (Admin view)",
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/stats",
+              "raw": "{{baseUrl}}/api/admin/users",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "stats"]
+              "path": ["api", "admin", "users"]
             },
-            "description": "Статистика платформы: кол-во пользователей, постов, лайков, комментариев"
+            "description": "Все пользователи с полной информацией (роль, enabled, пароль скрыт). Только ADMIN."
           },
           "response": []
         },
         {
-          "name": "GET - Health Check",
+          "name": "GET - Admin Stats",
           "request": {
             "method": "GET",
             "header": [
-              { "key": "Accept", "value": "application/json" }
+              { "key": "Authorization", "value": "Bearer {{token}}" }
             ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "stats"]
+            },
+            "description": "Расширенная статистика: кол-во по ролям, заблокированных и т.д. Только ADMIN."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Change User Role",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"MODERATOR\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/3/role",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "3", "role"]
+            },
+            "description": "Изменить роль пользователя ID=3. Допустимые значения: USER, MODERATOR, ADMIN. Только ADMIN."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Toggle Ban User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/3/toggle-ban",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "3", "toggle-ban"]
+            },
+            "description": "Заблокировать / разблокировать пользователя ID=3. Только ADMIN."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Delete User (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/3",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "3"]
+            },
+            "description": "Удалить любого пользователя. Только ADMIN. ⚠️ Необратимо!"
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Delete Any Post (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/posts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "posts", "1"]
+            },
+            "description": "Удалить любой пост. Только ADMIN."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📊 Stats & Health",
+      "item": [
+        {
+          "name": "GET - Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/health",
               "host": ["{{baseUrl}}"],
               "path": ["api", "health"]
             },
-            "description": "Проверка работоспособности. Ответ: {status: UP, database: PostgreSQL, port: 8090}"
+            "description": "Проверка работоспособности сервера. Публичный эндпоинт."
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Platform Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "stats"]
+            },
+            "description": "Публичная статистика: кол-во пользователей, постов, лайков, комментариев."
           },
           "response": []
         }

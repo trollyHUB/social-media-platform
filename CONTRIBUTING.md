@@ -110,6 +110,7 @@ docs: обновлён README
 ## 📞 Контакты
 
 - GitHub: [@trollyHUB](https://github.com/trollyHUB)
+- Email: tolegen.manasov05@gmail.com
 
 ---
 

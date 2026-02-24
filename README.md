@@ -304,6 +304,7 @@ MIT License — Copyright (c) 2026 Tolegen
 **Толеген** — студент 3 курса, ЕНУ им. Л.Н. Гумилёва
 
 - GitHub: [@trollyHUB](https://github.com/trollyHUB)
+- Email: tolegen.manasov05@gmail.com
 
 ---
 
