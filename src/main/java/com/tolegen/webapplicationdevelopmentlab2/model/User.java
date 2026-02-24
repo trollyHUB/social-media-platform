@@ -1,17 +1,12 @@
 package com.tolegen.webapplicationdevelopmentlab2.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-/**
- * JPA Entity для пользователя социальной сети
- * @Data от Lombok генерирует геттеры, сеттеры, toString, equals, hashCode
- */
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "username"),
@@ -20,6 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
 
     @Id
@@ -32,11 +28,24 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    @JsonIgnore
+    private String password;
+
     @Column(length = 500)
     private String bio;
 
     @Column(name = "avatar_color", length = 100)
-    private String avatarColor = "#667eea, #764ba2";
+    private String avatarColor;
+
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Role role = Role.USER;
+
+    @Builder.Default
+    private Boolean enabled = true;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -46,13 +55,20 @@ public class User {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime lastActive;
 
+    public enum Role {
+        USER, MODERATOR, ADMIN
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.lastActive = LocalDateTime.now();
         if (this.avatarColor == null) {
-            this.avatarColor = generateRandomColor();
+            String[] colors = {"#6c63ff","#11998e","#ee0979","#f093fb","#4facfe","#f7971e","#a18cd1"};
+            this.avatarColor = colors[(int)(Math.random() * colors.length)];
         }
+        if (this.enabled == null) this.enabled = true;
+        if (this.role == null) this.role = Role.USER;
     }
 
     @PreUpdate
@@ -60,26 +76,6 @@ public class User {
         this.lastActive = LocalDateTime.now();
     }
 
-    private String generateRandomColor() {
-        String[] colors = {
-                "#667eea, #764ba2",
-                "#11998e, #38ef7d",
-                "#ee0979, #ff6a00",
-                "#f093fb, #f5576c",
-                "#4facfe, #00f2fe"
-        };
-        return colors[(int) (Math.random() * colors.length)];
-    }
-
-    public boolean isOnline() {
-        if (lastActive == null) return false;
-        long minutes = java.time.Duration.between(lastActive, LocalDateTime.now()).toMinutes();
-        return minutes < 5;
-    }
-
-    // Для совместимости со старым кодом
-    public LocalDateTime getRegisteredAt() {
-        return createdAt;
-    }
+    public boolean isAdmin() { return role == Role.ADMIN; }
+    public boolean isModerator() { return role == Role.MODERATOR || role == Role.ADMIN; }
 }
-

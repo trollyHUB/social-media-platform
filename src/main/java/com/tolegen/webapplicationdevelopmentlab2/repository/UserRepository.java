@@ -23,4 +23,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // SELECT EXISTS(SELECT 1 FROM users WHERE LOWER(email) = LOWER(?))
     boolean existsByEmailIgnoreCase(String email);
+
+    // Добавлено для статистики Admin панели
+    long countByRole(User.Role role);
+
+    // Добавлено для статистики Admin панели
+    long countByEnabled(boolean enabled);
 }

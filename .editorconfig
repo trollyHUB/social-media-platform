@@ -1,0 +1,45 @@
+# EditorConfig — единый стиль кода для всех IDE
+# https://editorconfig.org
+
+root = true
+
+# Общие правила
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Java
+[*.java]
+indent_size = 4
+
+# TypeScript / JavaScript / JSON
+[*.{ts,tsx,js,jsx,json}]
+indent_size = 2
+
+# YAML
+[*.{yml,yaml}]
+indent_size = 2
+
+# XML / HTML
+[*.{xml,html}]
+indent_size = 2
+
+# Markdown (пробелы в конце строки важны)
+[*.md]
+trim_trailing_whitespace = false
+
+# Properties
+[*.properties]
+indent_size = 0
+
+# SQL
+[*.sql]
+indent_size = 4
+
+# Shell
+[*.{sh,ps1}]
+indent_size = 2

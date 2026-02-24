@@ -1,19 +1,35 @@
+# =====================================================
+# NEXIS Connect — .gitignore
+# =====================================================
+
+# ==================== JAVA / MAVEN ====================
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-.kotlin
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
 
-### Documentation (не коммитим документацию) ###
-DOCS GENERAL/
+# ==================== FRONTEND ====================
+frontend/node/
+frontend/node_modules/
+frontend/dist/
+frontend/.cache/
+frontend/.vite/
 
-### IntelliJ IDEA ###
+# ==================== IDE ====================
+# IntelliJ IDEA
 .idea/
 *.iws
 *.iml
 *.ipr
 
-### Eclipse ###
+# Eclipse
 .apt_generated
 .classpath
 .factorypath
@@ -22,21 +38,57 @@ DOCS GENERAL/
 .springBeans
 .sts4-cache
 
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+# VS Code
+.vscode/
+
+# ==================== OS ====================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# ==================== СЕКРЕТЫ ====================
+# Никогда не коммитить файлы с паролями!
+application-local.properties
+application-prod.properties
+.env
+.env.local
+.env.production
+*.pem
+*.key
+
+# ==================== ЛОГИ ====================
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==================== БИНАРНИКИ ====================
+bun.lockb
+
+# ==================== СТАРАЯ ДОКУМЕНТАЦИЯ ====================
+# Перенесена в docs/archive/
+DOCS GENERAL/
+
+# ==================== ВНУТРЕННЯЯ ДОКУМЕНТАЦИЯ ====================
+# Не публиковать! Личные заметки, УМКД, AI инструкции, идеи
+docs/
+КАК-ЗАПУСКАТЬ.md
+database_init.sql
+
+# ==================== РАЗНОЕ ====================
+.kotlin
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-
-### Mac OS ###
-.DS_Store
-
-### Logs ###
-*.log

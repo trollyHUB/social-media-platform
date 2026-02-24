@@ -1,267 +1,317 @@
-# 📱 Social Media Platform
+<div align="center">
 
-> **REST API платформа социальных сетей** на Spring Boot 3 + PostgreSQL + Java 17
+# 🌐 NEXIS Connect
 
-[![Java](https://img.shields.io/badge/Java-17-orange?logo=java)](https://aws.amazon.com/corretto/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.2-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?logo=postgresql)](https://www.postgresql.org/)
-[![Maven](https://img.shields.io/badge/Maven-3.x-red?logo=apachemaven)](https://maven.apache.org/)
+### Modern Social Media Platform
+
+[![Java](https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://aws.amazon.com/corretto/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+
+**Полнофункциональная социальная сеть с авторизацией, лентой, лайками и админ-панелью.**
+
+[Функции](#-функции) · [Быстрый старт](#-быстрый-старт) · [API](#-api) · [Документация](#-документация) · [Лицензия](#-лицензия)
+
+</div>
+
+---
+
+## 📸 Скриншоты
+
+| Landing Page | Лента | Admin Panel |
+|:---:|:---:|:---:|
+| Современная посадочная страница | Персональная лента постов | Управление пользователями |
+
+---
+
+## ✨ Функции
+
+### 🔐 Аутентификация
+- JWT авторизация (stateless)
+- BCrypt хеширование паролей
+- Три роли: `USER` · `MODERATOR` · `ADMIN`
+- Защищённые маршруты
+
+### 📝 Социальные функции
+- Создание и просмотр постов
+- Система лайков
+- Комментарии
+- Профили пользователей с аватарами
+
+### 🛡️ Администрирование
+- Панель управления (`/admin`)
+- Управление пользователями и ролями
+- Бан/разбан аккаунтов
+- Удаление контента
+
+### 🎨 Интерфейс
+- Адаптивный дизайн (Desktop + Mobile)
+- Тёмная / Светлая тема
+- Плавные анимации (Framer Motion)
+- Компоненты Shadcn/UI
+
+---
+
+## 🛠️ Технологический стек
+
+<table>
+<tr>
+<td align="center" width="50%">
+
+### Backend
+
+| Технология | Версия |
+|:---|:---|
+| Java (Corretto) | 17 |
+| Spring Boot | 3.2.2 |
+| Spring Security | 6.2 |
+| Spring Data JPA | 3.2 |
+| Hibernate ORM | 6.4 |
+| PostgreSQL | 16 |
+| JWT (jjwt) | 0.12.6 |
+| Maven | 3.9 |
+
+</td>
+<td align="center" width="50%">
+
+### Frontend
+
+| Технология | Версия |
+|:---|:---|
+| React | 19 |
+| TypeScript | 5.7 |
+| Vite | 6.4 |
+| Tailwind CSS | 3.4 |
+| Shadcn/UI | latest |
+| Framer Motion | 11 |
+| Zustand | 4 |
+| TanStack Query | 5 |
+
+</td>
+</tr>
+</table>
 
 ---
 
 ## 🚀 Быстрый старт
 
 ### Требования
-- Java 17 (Amazon Corretto)
-- PostgreSQL 16 (порт `5434`)
-- Maven 3.x (или использовать `mvnw`)
 
-### 1. Настройка базы данных
-Создайте базу данных в PostgreSQL:
+- **Java 17+** — [Amazon Corretto](https://aws.amazon.com/corretto/)
+- **PostgreSQL 16** — [Download](https://www.postgresql.org/download/)
+- **Node.js 20+** — [Download](https://nodejs.org/)
+
+### 1. Клонировать
+
+```bash
+git clone https://github.com/trollyHUB/nexis-social-pulse.git
+cd nexis-social-pulse
+```
+
+### 2. Настроить БД
+
 ```sql
 CREATE DATABASE socialmediaplatform;
 ```
 
-### 2. Настройка подключения
-Файл `src/main/resources/application.properties`:
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5434/socialmediaplatform
-spring.datasource.username=postgres
-spring.datasource.password=1234
-server.port=8090
+### 3. Настроить конфиг
+
+```bash
+# Скопировать шаблон и заполнить свои данные:
+cp src/main/resources/application.properties.example src/main/resources/application.properties
 ```
 
-### 3. Запуск приложения
+Отредактировать `application.properties`:
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/socialmediaplatform
+spring.datasource.username=postgres
+spring.datasource.password=YOUR_PASSWORD
+app.jwt.secret=YOUR_SECRET_KEY_MINIMUM_32_CHARS
+```
 
-**Через Maven Wrapper:**
+### 4. Запустить
+
+```powershell
+.\run.ps1
+```
+
+Или вручную:
 ```bash
 ./mvnw spring-boot:run
 ```
 
-**Через IntelliJ IDEA:**
-- Открыть `SocialMediaPlatformApplication.java`
-- Нажать зелёную кнопку ▶ Run
+### 5. Открыть
 
-### 4. Открыть в браузере
 ```
-http://localhost:8090/
+http://localhost:8090
 ```
+
+### 🔑 Тестовые аккаунты
+
+| Email | Пароль | Роль |
+|:---|:---|:---|
+| `admin@nexis.com` | `admin123` | 🔴 ADMIN |
+| `moder@nexis.com` | `moder123` | 🟡 MODERATOR |
+| `tolegen@nexis.com` | `test123` | 🟢 USER |
+
+> При первом запуске автоматически создаётся 12 тестовых пользователей.
 
 ---
 
-## 🏗️ Структура проекта
+## 📡 API
 
-```
-src/main/java/com/tolegen/webapplicationdevelopmentlab2/
-├── SocialMediaPlatformApplication.java   # Точка входа Spring Boot
-├── config/
-│   ├── DataInitializer.java              # Инициализация тестовых данных
-│   └── WebSecurityConfig.java            # Настройка безопасности (CSP, CORS)
-├── controller/
-│   └── SocialMediaApiController.java     # REST API контроллер (все эндпоинты)
-├── dto/
-│   ├── CreatePostRequest.java            # DTO для создания поста
-│   ├── CreateUserRequest.java            # DTO для создания пользователя
-│   └── CreateCommentRequest.java         # DTO для создания комментария
-├── model/
-│   ├── Post.java                         # JPA Entity — пост
-│   ├── User.java                         # JPA Entity — пользователь
-│   └── Comment.java                      # JPA Entity — комментарий
-├── repository/
-│   ├── PostRepository.java               # Spring Data JPA репозиторий постов
-│   ├── UserRepository.java               # Spring Data JPA репозиторий пользователей
-│   └── CommentRepository.java            # Spring Data JPA репозиторий комментариев
-└── service/
-    ├── PostService.java                  # Бизнес-логика постов
-    ├── UserService.java                  # Бизнес-логика пользователей
-    └── CommentService.java               # Бизнес-логика комментариев
+**Base URL:** `http://localhost:8090/api`
 
-src/main/resources/
-├── application.properties                # Конфигурация приложения
-└── static/
-    ├── index.html                        # Главная страница (SPA)
-    ├── css/style.css                     # Стили
-    └── js/api-client.js                  # JavaScript API клиент
-```
-
----
-
-## 📡 REST API
-
-Базовый URL: `http://localhost:8090`
-
-### 📝 Posts (Посты)
+### Публичные эндпоинты
 
 | Метод | URL | Описание |
-|-------|-----|----------|
-| `GET` | `/api/posts` | Получить все посты |
-| `GET` | `/api/posts?author=tolegen` | Посты конкретного автора |
-| `GET` | `/api/posts/{id}` | Пост по ID |
-| `POST` | `/api/posts` | Создать пост |
-| `PUT` | `/api/posts/{id}` | Обновить пост |
-| `DELETE` | `/api/posts/{id}` | Удалить пост |
-| `POST` | `/api/posts/{id}/like` | Лайкнуть пост |
-
-**Создать пост (POST `/api/posts`):**
-```json
-{
-  "author": "tolegen",
-  "content": "Привет, мир! 👋"
-}
-```
-
-### 👥 Users (Пользователи)
-
-| Метод | URL | Описание |
-|-------|-----|----------|
-| `GET` | `/api/users` | Получить всех пользователей |
-| `GET` | `/api/users/{id}` | Пользователь по ID |
-| `GET` | `/api/users?username=tolegen` | Поиск по username |
-| `POST` | `/api/users` | Создать пользователя |
-| `DELETE` | `/api/users/{id}` | Удалить пользователя |
-
-**Создать пользователя (POST `/api/users`):**
-```json
-{
-  "username": "newuser",
-  "email": "newuser@example.com",
-  "bio": "О себе..."
-}
-```
-> ⚠️ Дубликаты username/email → `409 Conflict`
-
-### 💬 Comments (Комментарии)
-
-| Метод | URL | Описание |
-|-------|-----|----------|
-| `GET` | `/api/posts/{postId}/comments` | Комментарии поста |
-| `POST` | `/api/posts/{postId}/comments` | Добавить комментарий |
-| `DELETE` | `/api/comments/{id}` | Удалить комментарий |
-
-### 📊 Статистика
-
-| Метод | URL | Описание |
-|-------|-----|----------|
+|:---|:---|:---|
+| `POST` | `/api/auth/register` | Регистрация |
+| `POST` | `/api/auth/login` | Вход → JWT токен |
+| `GET` | `/api/health` | Health check |
 | `GET` | `/api/stats` | Статистика платформы |
-| `GET` | `/api/health` | Проверка работоспособности |
+
+### Авторизованные (Bearer JWT)
+
+| Метод | URL | Описание |
+|:---|:---|:---|
+| `GET` | `/api/auth/me` | Текущий пользователь |
+| `GET` | `/api/posts` | Лента постов |
+| `POST` | `/api/posts` | Создать пост |
+| `POST` | `/api/posts/{id}/like` | Лайкнуть пост |
+| `GET` | `/api/users/{id}` | Профиль пользователя |
+
+### Только ADMIN
+
+| Метод | URL | Описание |
+|:---|:---|:---|
+| `GET` | `/api/admin/users` | Все пользователи |
+| `PUT` | `/api/admin/users/{id}/role` | Изменить роль |
+| `PUT` | `/api/admin/users/{id}/toggle-ban` | Бан/разбан |
+| `DELETE` | `/api/admin/posts/{id}` | Удалить пост |
+
+> 📮 Postman коллекция: [`Social_Media_API.postman_collection.json`](Social_Media_API.postman_collection.json)
 
 ---
 
-## 🧪 Тестирование через Postman
+## 🗄️ База данных
 
-1. Импортируйте файл `Social_Media_API.postman_collection.json` в Postman
-2. Переменная `{{baseUrl}}` = `http://localhost:8090` уже настроена
-3. Коллекция содержит **17 запросов** в 4 папках:
-   - 📝 **Posts API** — 7 запросов
-   - 💬 **Comments API** — 3 запроса
-   - 👥 **Users API** — 6 запросов
-   - 📊 **Stats and Health** — 2 запроса
+**8 таблиц** в PostgreSQL:
+
+```
+users · posts · comments · post_likes · follows · notifications · messages · bookmarks
+```
+
+SQL миграция: [`docs/database/migrations/V001__initial_schema.sql`](docs/database/migrations/V001__initial_schema.sql)
 
 ---
 
-## 🛠️ Технологический стек
+## 📁 Структура проекта
 
-| Технология | Версия | Назначение |
-|------------|--------|------------|
-| Java (Amazon Corretto) | 17 | Язык программирования |
-| Spring Boot | 3.2.2 | Фреймворк приложения |
-| Spring Web (MVC) | 6.1.3 | REST API, встроенный Tomcat |
-| Spring Data JPA | 3.2.2 | Работа с базой данных |
-| Spring Security | 3.2.2 | Безопасность, CORS, CSP |
-| Hibernate ORM | 6.4.1 | ORM маппинг |
-| PostgreSQL | 16 | База данных |
-| Lombok | 1.18.30 | Генерация кода (геттеры, сеттеры) |
-| Jackson | 2.15.3 | JSON сериализация |
-| Maven | 3.x | Сборка проекта |
-
----
-
-## 🗄️ Модели данных
-
-### Post (Пост)
 ```
-id, author, content, likes, commentsCount, createdAt, updatedAt
-```
-
-### User (Пользователь)
-```
-id, username (уникальный), email (уникальный), bio, avatarColor, createdAt, lastActive
-```
-
-### Comment (Комментарий)
-```
-id, postId, author, content, createdAt
+├── frontend/                  React 19 приложение
+│   └── src/
+│       ├── api/               API клиенты (Axios)
+│       ├── components/        UI компоненты
+│       ├── pages/             Страницы
+│       ├── store/             Zustand state
+│       └── types/             TypeScript типы
+│
+├── src/main/java/             Spring Boot API
+│   └── com/tolegen/.../
+│       ├── config/            Security, JWT, SPA
+│       ├── controller/        REST контроллеры
+│       ├── model/             JPA Entity
+│       ├── repository/        Spring Data JPA
+│       ├── service/           Бизнес-логика
+│       └── dto/               Data Transfer Objects
+│
+├── docs/                      📚 Документация
+│   ├── AI-GUIDE.md            Инструкция для разработки
+│   ├── 01-project/            Roadmap, идеи, changelog
+│   ├── 02-architecture/       Стек, API
+│   ├── 05-university/         УМКД
+│   └── database/              Схема БД, миграции
+│
+├── run.ps1                    Скрипт запуска
+├── pom.xml                    Maven конфиг
+└── КАК-ЗАПУСКАТЬ.md          Краткая инструкция
 ```
 
 ---
 
-## ✨ Функциональность
+## 📚 Документация
 
-- ✅ Полный CRUD для постов, пользователей, комментариев
-- ✅ Система лайков для постов
-- ✅ Защита от дублирования пользователей (409 Conflict)
-- ✅ Фильтрация постов по автору
-- ✅ Информация о времени создания/обновления
-- ✅ Статистика платформы в реальном времени
-- ✅ REST API Demo страница с живыми запросами
-- ✅ Postman коллекция для тестирования
-- ✅ CORS настроен для всех источников
-- ✅ CSP (Content Security Policy) настроен
-- ✅ Автоматическое создание таблиц (Hibernate DDL auto)
-- ✅ Инициализация тестовых данных при первом запуске
+| Документ | Описание |
+|:---|:---|
+| [`docs/AI-GUIDE.md`](docs/AI-GUIDE.md) | Главный гайд проекта |
+| [`docs/01-project/ROADMAP.md`](docs/01-project/ROADMAP.md) | Дорожная карта |
+| [`docs/01-project/IDEAS.md`](docs/01-project/IDEAS.md) | Идеи (100+) |
+| [`docs/02-architecture/STACK.md`](docs/02-architecture/STACK.md) | Технологический стек |
+| [`docs/database/DATABASE.md`](docs/database/DATABASE.md) | Схема БД |
+| [`docs/05-university/COMPLIANCE.md`](docs/05-university/COMPLIANCE.md) | Соответствие УМКД |
 
 ---
 
-## 📁 Документация
+## 📊 Статус УМКД
 
-Вся документация находится в папке [`DOCS GENERAL/`](DOCS GENERAL/)
+Проект выполняет **13 из 15** лабораторных работ дисциплины *"Разработка веб-ориентированных приложений: Java EE"* (WBKA 3309).
+
+| Требование | Реализация | Статус |
+|:---|:---|:---:|
+| Spring Boot | 3.2.2 | ✅ |
+| Spring MVC | @RestController | ✅ |
+| Spring Security | JWT + Roles | ✅ |
+| Hibernate/JPA | Spring Data JPA | ✅ |
+| PostgreSQL | 16 | ✅ |
+| REST API | 14+ endpoints | ✅ |
+| Git | GitHub | ✅ |
+| Maven | pom.xml | ✅ |
+| JUnit тесты | — | 🔜 |
+| Деплой | — | 🔜 |
+
+---
+
+## 🤝 Contributing
+
+Мы приветствуем вклад! Прочитайте [`CONTRIBUTING.md`](CONTRIBUTING.md) перед отправкой PR.
+
+---
+
+## 🔒 Безопасность
+
+Обнаружили уязвимость? Прочитайте [`SECURITY.md`](SECURITY.md).
+
+---
+
+## 📄 Лицензия
+
+Этот проект лицензирован под **MIT License** — подробности в файле [`LICENSE`](LICENSE).
+
+```
+MIT License — Copyright (c) 2026 Tolegen
+Разрешено: использование, копирование, модификация, публикация, продажа.
+Условие: указание авторских прав.
+```
 
 ---
 
 ## 👨‍💻 Автор
 
-**Tolegen** — Web Application Development LAB2  
-Spring Boot + PostgreSQL + REST API
+**Толеген** — студент 3 курса, ЕНУ им. Л.Н. Гумилёва
 
 - GitHub: [@trollyHUB](https://github.com/trollyHUB)
-- Repository: [social-media-platform](https://github.com/trollyHUB/social-media-platform)
-
----
-
-## 🙏 Благодарности
-
-- Jakarta EE Community
-- Apache Tomcat Team
-- IITU преподавателям
-
----
-
-## 📞 Контакты
-
-Если у вас есть вопросы или предложения:
-
-- 🐛 Issues: [GitHub Issues](https://github.com/trollyHUB/social-media-platform/issues)
-
----
-
-## 📈 Статус проекта
-
-```
-✅ Production Ready
-✅ Высокий уровень безопасности (10/10)
-✅ Все функции реализованы
-✅ Документация полная
-✅ Готов к демонстрации
-```
 
 ---
 
 <div align="center">
 
-**⭐ Поставьте звезду, если проект понравился! ⭐**
+**⭐ Star this repo if you like it! ⭐**
 
 Made with ❤️ by [Tolegen](https://github.com/trollyHUB)
 
-**[Наверх ⬆️](#-social-media-platform)**
 
 </div>
