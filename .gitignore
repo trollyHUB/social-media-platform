@@ -59,6 +59,7 @@ Desktop.ini
 
 # ==================== СЕКРЕТЫ ====================
 # Никогда не коммитить файлы с паролями!
+src/main/resources/application.properties
 application-local.properties
 application-prod.properties
 .env

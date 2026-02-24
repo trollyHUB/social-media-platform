@@ -86,8 +86,8 @@
 | Vite | 6.4 |
 | Tailwind CSS | 3.4 |
 | Shadcn/UI | latest |
-| Framer Motion | 11 |
-| Zustand | 4 |
+| Framer Motion | 12 |
+| Zustand | 5 |
 | TanStack Query | 5 |
 
 </td>
@@ -107,8 +107,8 @@
 ### 1. Клонировать
 
 ```bash
-git clone https://github.com/trollyHUB/nexis-social-pulse.git
-cd nexis-social-pulse
+git clone https://github.com/trollyHUB/social-media-platform.git
+cd social-media-platform
 ```
 
 ### 2. Настроить БД
@@ -205,7 +205,7 @@ http://localhost:8090
 users · posts · comments · post_likes · follows · notifications · messages · bookmarks
 ```
 
-SQL миграция: [`docs/database/migrations/V001__initial_schema.sql`](docs/database/migrations/V001__initial_schema.sql)
+SQL инициализация описана в [`database_init.sql`](database_init.sql) (локально, не публикуется в целях безопасности).
 
 ---
 
@@ -245,14 +245,16 @@ SQL миграция: [`docs/database/migrations/V001__initial_schema.sql`](docs
 
 ## 📚 Документация
 
+> 📁 Документация хранится локально в папке `docs/` (не публикуется в репозитории).
+
 | Документ | Описание |
 |:---|:---|
-| [`docs/AI-GUIDE.md`](docs/AI-GUIDE.md) | Главный гайд проекта |
-| [`docs/01-project/ROADMAP.md`](docs/01-project/ROADMAP.md) | Дорожная карта |
-| [`docs/01-project/IDEAS.md`](docs/01-project/IDEAS.md) | Идеи (100+) |
-| [`docs/02-architecture/STACK.md`](docs/02-architecture/STACK.md) | Технологический стек |
-| [`docs/database/DATABASE.md`](docs/database/DATABASE.md) | Схема БД |
-| [`docs/05-university/COMPLIANCE.md`](docs/05-university/COMPLIANCE.md) | Соответствие УМКД |
+| `docs/AI-GUIDE.md` | Главный гайд проекта |
+| `docs/01-project/ROADMAP.md` | Дорожная карта |
+| `docs/01-project/IDEAS.md` | Идеи (100+) |
+| `docs/02-architecture/STACK.md` | Технологический стек |
+| `docs/database/DATABASE.md` | Схема БД |
+| `docs/05-university/COMPLIANCE.md` | Соответствие УМКД |
 
 ---
 
